@@ -11,6 +11,7 @@ import {
   Divider,
   Stack,
   Skeleton,
+  Button,
   Paper,
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
@@ -52,6 +53,23 @@ export default function ListingDetail() {
       mounted = false;
     };
   }, [id]);
+
+  const handlePayment = async () => {
+    if (!item) return;
+    try {
+      // Request a checkout session from the backend
+      const { data } = await api.post(`/listings/${item._id}/create-checkout-session`);
+      if (data.url) {
+        // Redirect the user to Stripe's checkout page
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      console.error('Failed to create payment session:', err);
+      // You can add a user-facing error message here, e.g., using a snackbar
+      alert('Could not connect to payment provider. Please try again later.');
+    }
+  };
+
 
   if (loading) {
     return (
@@ -182,6 +200,10 @@ export default function ListingDetail() {
               {(item as any)?.seller?.email || (item as any)?.sellerEmail || 'Not available'}
             </strong>
           </Typography>
+
+          <Button variant="contained" color="primary" sx={{ mt: 3, width: '100%' }} onClick={handlePayment}>
+            Pay with Stripe
+          </Button>
         </Grid>
       </Grid>
     </Box>

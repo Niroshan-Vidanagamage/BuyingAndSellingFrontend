@@ -5,7 +5,13 @@ import { Listing } from '../api/clients';
 import { Link as RouterLink } from 'react-router-dom';
 
 
-export default function ListingCard({ item }: { item: Listing }){
+interface ListingCardProps {
+    item: Listing;
+    onEdit?: (id: string) => void;
+    onDelete?: (id: string) => void;
+}
+
+export default function ListingCard({ item, onEdit, onDelete }: ListingCardProps){
     const thumb = item.images?.find(i => i.kind === 'thumb') || item.images?.[0];
     return (
         <Card variant="outlined" sx={{ borderRadius: 2 }}>
@@ -23,6 +29,12 @@ export default function ListingCard({ item }: { item: Listing }){
             </CardContent>
             <CardActions>
                 <Button size="small" component={RouterLink} to={`/listing/${item._id}`}>View</Button>
+                {onEdit && (
+                    <Button size="small" onClick={() => onEdit(item._id)}>Edit</Button>
+                )}
+                {onDelete && (
+                    <Button size="small" color="error" onClick={() => onDelete(item._id)}>Delete</Button>
+                )}
             </CardActions>
         </Card>
     );

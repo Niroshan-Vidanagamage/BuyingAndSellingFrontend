@@ -4,7 +4,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { CssBaseline, AppBar, Toolbar, Typography, Container, Button } from "@mui/material";
 import Home from "./pages/Home.tsx";
 import Category from "./pages/Category.tsx";
-import EditingList from "./pages/EditListing.tsx";
+import EditListing from "./pages/EditListing.tsx";
 import ListingDetail from "./pages/ListingDetail.tsx"; // you’ll need to create this
 import NewListing from "./pages/NewListing.tsx";       // you already have this
 import Login from "./pages/Login.tsx";
@@ -15,7 +15,7 @@ const router = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/c/:category", element: <Category /> },
   { path: "/listing/:id", element: <ListingDetail /> },
-  { path: "/listing/:id/edit", element: <EditingList /> },
+  { path: "/listing/edit/:id", element: <EditListing /> },
   { path: "/sell/new", element: <NewListing /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },

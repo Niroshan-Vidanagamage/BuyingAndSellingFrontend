@@ -1,15 +1,10 @@
 // File: src/api/client.tsx
 import axios from 'axios';
 
-
-
-const baseURL = 'http://localhost:4000/api/v1'
-
-
-
+const baseURL =
+  process.env.REACT_APP_API_BASE?.replace(/\/+$/, '') || 'http://localhost:4000/api/v1';
 
 export const api = axios.create({ baseURL });
-
 
 // Attach JWT from localStorage if present
 api.interceptors.request.use((config) => {
@@ -20,7 +15,6 @@ api.interceptors.request.use((config) => {
     }
     return config;
 });
-
 
 api.interceptors.response.use(
     (res) => res,
@@ -33,7 +27,6 @@ api.interceptors.response.use(
     return Promise.reject(err);
     }
 );
-
 
 export type Listing = {
     _id: string;
@@ -49,7 +42,6 @@ export type Listing = {
     createdAt: string;
     updatedAt: string;
 };
-
 
 export type User = {
     _id: string;

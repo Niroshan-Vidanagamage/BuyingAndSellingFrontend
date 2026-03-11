@@ -7,7 +7,7 @@ import * as React from 'react';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { api } from '../api/clients.tsx';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-import Axios from 'axios';
+
 
 export default function Register(){
   const [name, setName] = React.useState('');

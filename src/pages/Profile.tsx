@@ -7,7 +7,7 @@ import * as React from 'react';
 import { Box, Typography, TextField, Button, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { api, Listing, User } from '../api/clients.tsx';
-import ListingCard from '../components/ListingCard.tsx';
+import { SmallItemCard } from '../components/ui/index.ts';
 
 export default function Profile(){
   const [me, setMe] = React.useState<User | null>(null);
@@ -82,7 +82,7 @@ export default function Profile(){
         <Grid container spacing={2}>
           {myListings.map(it => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={it._id}>
-              <ListingCard item={it} onEdit={onEdit} onDelete={onDelete} />
+              <SmallItemCard item={it} onEdit={onEdit} onDelete={onDelete} />
             </Grid>
           ))}
         </Grid>

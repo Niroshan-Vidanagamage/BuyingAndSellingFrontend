@@ -3,8 +3,10 @@ import * as React from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { api, Listing } from '../api/clients.tsx';
 import Grid from '@mui/material/Grid';
-import { Box, Typography, TextField, MenuItem, Button } from '@mui/material';
-import ListingCard from '../components/ListingCard.tsx';
+import Stack from '@mui/material/Stack';
+import { Box, Typography } from '@mui/material';
+import Filters, { FilterState } from '../components/Filters.tsx';
+import { SmallItemCard } from '../components/ui/index.ts';
 
 
 export default function Category(){
@@ -12,7 +14,7 @@ export default function Category(){
   const [params, setParams] = useSearchParams();
   const [items, setItems] = React.useState<Listing[]>([]);
   const [loading, setLoading] = React.useState(false);
-  const [filters, setFilters] = React.useState({
+  const [filters, setFilters] = React.useState<FilterState>({
     minPrice: params.get('minPrice') || '',
     maxPrice: params.get('maxPrice') || '',
     condition: params.get('condition') || '',
@@ -39,37 +41,22 @@ export default function Category(){
 
   return (
     <Box p={2}>
-      <Typography variant="h5" mb={2}>{category.replaceAll('_',' ')}</Typography>
-      <Box display="flex" gap={2} flexWrap="wrap" mb={2}>
-        <TextField label="Min Price" size="small" value={filters.minPrice} onChange={e=>setFilters(s=>({...s,minPrice:e.target.value}))} />
-        <TextField label="Max Price" size="small" value={filters.maxPrice} onChange={e=>setFilters(s=>({...s,maxPrice:e.target.value}))} />
-        <TextField select size="small" label="Condition" value={filters.condition} onChange={e=>setFilters(s=>({...s,condition:e.target.value}))}>
-          <MenuItem value="">Any</MenuItem>
-          <MenuItem value="new">Brand New</MenuItem>
-          <MenuItem value="used">Used</MenuItem>
-        </TextField>
-        <TextField select size="small" label="Date Added" value={filters.dateRange} onChange={e=>setFilters(s=>({...s,dateRange:e.target.value}))}>
-          <MenuItem value="">Any</MenuItem>
-          <MenuItem value="24h">Last 24h</MenuItem>
-          <MenuItem value="7d">Last 7 days</MenuItem>
-          <MenuItem value="30d">Last 30 days</MenuItem>
-        </TextField>
-        <TextField select size="small" label="Sort" value={filters.sort} onChange={e=>setFilters(s=>({...s,sort:e.target.value}))}>
-          <MenuItem value="newest">Newest</MenuItem>
-          <MenuItem value="price_asc">Price ↑</MenuItem>
-          <MenuItem value="price_desc">Price ↓</MenuItem>
-        </TextField>
-        <Button variant="contained" onClick={apply} disabled={loading}>Apply</Button>
-      </Box>
+      <Typography variant="h2" mb={2}>{category.replaceAll('_',' ')}</Typography>
 
-      <Grid container spacing={2}>
-        {items.map((it) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={it._id}>
-            <ListingCard item={it} />
+      <Stack direction={{ xs: 'column', lg: 'row' }} spacing={2} alignItems="flex-start">
+        <Filters value={filters} onChange={setFilters} onApply={apply} disabled={loading} asSidebar />
+
+        <Box sx={{ flex: 1, width: '100%' }}>
+          <Grid container spacing={2}>
+            {items.map((it) => (
+              <Grid size={{ xs: 12, sm: 6, md: 4, xl: 3 }} key={it._id}>
+                <SmallItemCard item={it} />
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
-      {(!loading && items.length === 0) && <Typography mt={3}>No results.</Typography>}
+          {(!loading && items.length === 0) && <Typography mt={3}>No results.</Typography>}
+        </Box>
+      </Stack>
     </Box>
   );
 }

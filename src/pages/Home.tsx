@@ -1,9 +1,9 @@
 // src/pages/Home.tsx
 import * as React from 'react';
-import { Box, Typography, Card, CardActionArea, Grid, Skeleton, Stack } from '@mui/material';
+import { Box, Typography, Stack, Grid, Card } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { api, Listing } from '../api/clients.tsx';
-import { AppButton, GroupItemCard, SmallItemCard, TextInput } from '../components/ui/index.ts';
+import { AppButton, GroupItemCard, TextInput } from '../components/ui/index.ts';
 
 const CATS = [
   'HOUSES_LANDS',
@@ -11,7 +11,11 @@ const CATS = [
   'FURNITURE_HOUSEWARE',
   'SPORTS_EQUIPMENT',
   'VEHICLES',
-];
+] as const;
+
+function formatCategoryLabel(category: (typeof CATS)[number]) {
+  return category.replaceAll('_', ' ');
+}
 
 export default function Home() {
   const nav = useNavigate();
@@ -23,7 +27,7 @@ export default function Home() {
     let mounted = true;
     (async () => {
       setLoading(true);
-      const { data } = await api.get('/listings?sort=newest&limit=10');
+      const { data } = await api.get('/listings?sort=newest&limit=60');
       if (mounted) {
         setLatestListings(data.items || []);
         setLoading(false);
@@ -63,50 +67,96 @@ export default function Home() {
       </Box>
 
       <Box>
-      <Typography variant="h2" mb={2}>Browse Categories</Typography>
-      <Grid container spacing={2}>
-        {CATS.map((c) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={c}>
-            <Card sx={{ height: '100%' }}>
-              <CardActionArea onClick={() => nav(`/c/${c}`)} sx={{ p: 3.5, minHeight: 160 }}>
-                <Typography variant="h3" sx={{ mb: 1 }}>{c.replaceAll('_',' ')}</Typography>
-                <Typography variant="body1" color="text.secondary">
-                  Explore curated ads in {c.replaceAll('_', ' ').toLowerCase()}.
-                </Typography>
-              </CardActionArea>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+        <Typography variant="h2" mb={2}>Browse by Category</Typography>
+        <Stack spacing={3}>
+          {loading && <Typography>Loading category sections...</Typography>}
+
+          {!loading && (
+            <Grid container spacing={2}>
+              {CATS.map((category) => {
+                const categoryItems = latestListings.filter((item) => item.category === category);
+                const label = formatCategoryLabel(category);
+
+                return (
+                  <Grid key={category} size={{ xs: 12, sm: 12, md: 6, lg: 6 }}>
+                    <GroupItemCard
+                      title={label}
+                      description={`Explore curated ads in ${label.toLowerCase()}.`}
+                      items={categoryItems}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
+          )}
+
+          {!loading && latestListings.length === 0 && (
+            <Typography>No recent ads found.</Typography>
+          )}
+        </Stack>
       </Box>
+
+      <GroupItemCard
+        title="Fresh arrivals"
+        description="A grouped card layout that matches your UI spec: title, description, and four small item cards inside."
+        items={latestListings}
+      />
 
       <Box>
-      <Typography variant="h2" mb={2}>Latest Ads</Typography>
-      <Grid container spacing={2}>
-        {loading
-          ? Array.from({ length: 4 }).map((_, i) => (
-              <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={i}>
-                <Skeleton variant="rectangular" height={200} />
-                <Skeleton />
-                <Skeleton width="60%" />
-              </Grid>
-            ))
-          : latestListings.map((item) => (
-              <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item._id}>
-                <SmallItemCard item={item} />
-              </Grid>
-            ))}
-      </Grid>
-      {(!loading && latestListings.length === 0) && <Typography mt={3}>No recent ads found.</Typography>}
+        <Grid container spacing={2}>
+          <Grid size={{ sm: 6, md: 4, lg: 4 }}>
+            <Card
+              sx={{
+                backgroundColor: '#2432D4',
+                color: 'common.white',
+                minHeight: 100,
+                width: '100%',
+                p: 3,
+                borderRadius: 0.5,
+                textAlign: 'center',
+              }}
+            >
+              <Typography variant="body1">
+                100 000+ products sold
+              </Typography>
+            </Card>
+          </Grid>
+          <Grid size={{ sm: 6, md: 4, lg: 4 }}>
+            <Card
+              sx={{
+                backgroundColor: '#869EFF',
+                color: 'common.black',
+                minHeight: 100,
+                width: '100%',
+                p: 3,
+                borderRadius: 0.5,
+                textAlign: 'center',
+              }}
+            >
+              <Typography variant="body1">
+                2 500+ monthly users
+              </Typography>
+            </Card>
+          </Grid>
+          <Grid size={{ sm: 6, md: 4, lg: 4 }}>
+            <Card
+              sx={{
+                backgroundColor: '#2432D4',
+                color: 'common.white',
+                minHeight: 100,
+                width: '100%',
+                p: 3,
+                borderRadius: 0.5,
+                textAlign: 'center',
+              }}
+            >
+              <Typography variant="body1">
+                400+ ADs today
+              </Typography>
+            </Card>
+          </Grid>
+        </Grid>
       </Box>
-
-      {!loading && latestListings.length > 0 && (
-        <GroupItemCard
-          title="Fresh arrivals"
-          description="A grouped card layout that matches your UI spec: title, description, and four small item cards inside."
-          items={latestListings}
-        />
-      )}
     </Stack>
   );
 }

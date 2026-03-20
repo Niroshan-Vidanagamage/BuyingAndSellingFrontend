@@ -80,7 +80,7 @@ export default function Navbar() {
           aria-expanded={menuOpen ? "true" : undefined}
         >
           <img
-            src="/hamburger_menu.png"
+            src="/hamburger_Menu.png"
             alt="menu"
             style={{ width: 28, height: 28, cursor: 'pointer' }}
           />

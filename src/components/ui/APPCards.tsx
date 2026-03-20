@@ -140,18 +140,23 @@ export function TinyItemCard({ item }: TinyItemCardProps) {
 
 export function GroupItemCard({ title, description, items }: GroupItemCardProps) {
 	return (
-		<Card sx={{ overflow: 'hidden' }}>
+		<Card
+			sx={{
+				overflow: 'hidden',
+				width: '100%',
+			}}
+		>
 			<CardContent sx={{ p: 3 }}>
-				<Typography variant="h3" sx={{ mb: 1 }}>
-					{title}
-				</Typography>
-				<Typography variant="body1" color="text.secondary" sx={{ mb: 2.5 }}>
+			<Typography variant="h3" sx={{ mb: 1, textAlign: 'center' }}>
+				{title}
+			</Typography>
+			<Typography variant="body1" color="text.secondary" sx={{ mb: 2.5, textAlign: 'center' }}>
 					{description}
 				</Typography>
 				<Grid container spacing={2}>
 					{items.slice(0, 4).map((item) => (
 						<Grid size={{ xs: 12, sm: 6, lg: 3 }} key={item._id}>
-							<TinyItemCard item={item} compact />
+							<TinyItemCard item={item} />
 						</Grid>
 					))}
 				</Grid>
